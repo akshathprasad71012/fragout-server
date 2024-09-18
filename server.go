@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strconv"
 
 	"golang.org/x/net/websocket"
@@ -114,9 +115,12 @@ func (server *Server) broadcast(msg []byte, playerId int, gameId int){
 func main(){
 	server := NewServer();
 	fmt.Println("Listening for socket connection on ws://localhost:3000/ws");
-	
+    port := os.Getenv("PORT");
+    if port == ""{
+        port = ":3000"
+    }
 	http.Handle("/", http.FileServer(http.Dir("../frontend")))
 	http.Handle("/ws", websocket.Handler(server.handleConnection))
-	http.ListenAndServe(":3000", nil);
+    http.ListenAndServe(":" + port, nil);
 	
 }
